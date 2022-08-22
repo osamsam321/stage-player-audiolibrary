@@ -17,6 +17,8 @@ import com.player.model.AASSingleFieldContainer;
 import com.player.model.AlbumSP;
 import com.player.model.ArtistSP;
 import com.player.model.SongSP;
+import com.player.model.TopSongs;
+
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
@@ -27,13 +29,13 @@ public class CommonDAO {
 	@Autowired
 	JdbcTemplate jt;
 	
-	public List<AASSingleFieldContainer> findTopTenSongs()
+	public List<AASSingleFieldContainer> findTopSongsForAASSingleFieldContainer(int amount)
 	{
 		String sql = "select * from songsp song \r\n"
 				+ "left join songsp_albums sa on sa.songsp_songsp_id = song.songsp_id  \r\n"
 				+ "left join albumsp album on album.albumsp_id  = sa.albums_albumsp_id \r\n"
 				+ "left join artistsp a on song.artistsp_id = a.artistsp_id \r\n"
-				+ "order by song.listen_count  desc limit 10";
+				+ "order by song.listen_count  desc limit " + amount;
 		List<AASSingleFieldContainer> aASSnigleFieldContainerList = jt.query(sql, new RowMapper<AASSingleFieldContainer>()  {
 
 			@Override
@@ -71,14 +73,40 @@ public class CommonDAO {
 			
 		});
 	
-        			
-        			
+    		
 
 		return aASSnigleFieldContainerList;
 	}
-	public AASContainer findTopHundredSongs()
+	
+	public List<TopSongs> findTopSongs(int amount)
 	{
-		
-		return null;
+		String sql = "select artist_name, song_name, albumsp_img_path from songsp song \r\n"
+				+ "left join songsp_albums sa on sa.songsp_songsp_id = song.songsp_id  \r\n"
+				+ "left join albumsp album on album.albumsp_id  = sa.albums_albumsp_id \r\n"
+				+ "left join artistsp a on song.artistsp_id = a.artistsp_id \r\n"
+				+ "order by song.listen_count desc limit " + amount;
+		List<TopSongs> aASSnigleFieldContainerList = jt.query(sql, new RowMapper<TopSongs>()  {
+
+			@Override
+			public TopSongs mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new TopSongs(	
+									rs.getString("artist_name"),
+									rs.getString("song_name"),
+									rs.getString("albumsp_img_path")
+								);				
+			
+			
+			}
+			
+		});
+	
+    		
+
+		return aASSnigleFieldContainerList;
 	}
+	
+
+	   
+	   
+
 }

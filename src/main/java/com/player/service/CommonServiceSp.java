@@ -16,8 +16,10 @@ public class CommonServiceSp {
 	@Autowired
 	CommonDAO commonDAO;
 	
-	public Optional<List<AASSingleFieldContainer>> findTopTenSongsUsingAASSingleFieldContainer()
+	public Optional<List<TopSongs>> findTopSongsUsingAASSingleFieldContainer(int amount)
 	{
-		return Optional.of(commonDAO.findTopTenSongs());
+		return Optional.of(commonDAO.findTopSongs(amount));
 	}
+
+
 }

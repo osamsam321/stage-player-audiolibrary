@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.player.model.AASSingleFieldContainer;
+import com.player.model.TopSongs;
 import com.player.model.elw.SongsPlayed;
 import com.player.service.ArtistService;
 import com.player.service.CommonServiceSp;
@@ -43,11 +44,11 @@ public class StageAudioPlayerUserBasedController {
 		log.info("newsongplayed info: " + songsplayed.toString());
 		spService.saveSongsPlayed(songsplayed);
 	}
-	@GetMapping("/getTopTenSongs")
-	public ResponseEntity<List<AASSingleFieldContainer>> getTopTenSongs()
+	@GetMapping("/getTopSongs/{amount}")
+	public ResponseEntity<List<TopSongs>> getTopTenSongs(@PathVariable("amount") int amount)
 	{
-		return ResponseEntity.of(commanServiceSp.findTopTenSongsUsingAASSingleFieldContainer());
-		
+		return ResponseEntity.of(commanServiceSp.findTopSongsUsingAASSingleFieldContainer(amount));
 	}
+
 
 }
