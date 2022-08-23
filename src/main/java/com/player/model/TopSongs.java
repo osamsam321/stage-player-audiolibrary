@@ -19,6 +19,7 @@ public class TopSongs implements ITopSongs{
 		this.albumImg = "";
 		this.songName = "";
 	}
+	
 	public TopSongs(String artistName, String albumImg, String songName) {
 		super();
 		this.artistName = artistName;
