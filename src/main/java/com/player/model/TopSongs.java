@@ -45,7 +45,7 @@ public class TopSongs implements ITopSongs{
 		this.songName = songName;
 	}
 	
-	public void method()
+	public void method1()
 	{
 		
 	}
