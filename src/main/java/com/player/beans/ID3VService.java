@@ -1,18 +1,24 @@
 package com.player.beans;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.apache.bcel.util.ClassPath;
@@ -21,6 +27,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
@@ -31,8 +38,7 @@ import com.player.model.AASContainer;
 import com.player.model.AlbumSP;
 import com.player.model.ArtistSP;
 import com.player.model.SongSP;
-
-
+import org.apache.commons.math3.random.*;
 @Component
 public class ID3VService{
 	 Logger log = LogManager.getLogger(ID3VService.class);
@@ -51,6 +57,7 @@ public class ID3VService{
 		 boolean adequateData = true;
 		 try
 		 {
+			 log.info("file path in mp3 init method: " + file.getAbsolutePath());
 			  mp3 = new Mp3File(file);
 		 }
 		 catch(Exception e)
@@ -153,15 +160,24 @@ public class ID3VService{
 ////		mp3file.save("MyMp3File.mp3");
 ////	}
 //	}
-	public synchronized File createAlbumCoverFileSystemFromAudioFiles(byte[] imageByteData, UUID uuid) throws IOException 
+	public synchronized String createAlbumCoverFileSystemFromAudioFiles(byte[] imageByteData) throws IOException 
 	{	
+		SecureRandom sr = new SecureRandom();
+		//generate identifier
+		String nanoid = NanoIdUtils.randomNanoId(); 
 		File file = null;
+
+		// resource folder: C:\GIT\Github\stage-player-audiolibrary\target\classes\static\album_covers
 		boolean dataread = false;
 		try
 		{
-			String MimeType = "null";
+			String MimeType = "";
 			if(imageByteData != null)
-				MimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(imageByteData));
+			{
+				 MimeType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(imageByteData));
+				 log.info("imagebyte data is not null");
+				 
+			}
  			
 			log.info("image suffix is: " + MimeType);
 
@@ -171,10 +187,14 @@ public class ID3VService{
 		        /* change to resource server on production */
 				Resource resource = new ClassPathResource("static/album_covers" );
 				log.info("current resource folder: " + resource.getFile().getAbsolutePath());
-				file = resource.getFile();
-				file = File.createTempFile(uuid.toString(), ".jpg", file.getAbsoluteFile());
+			     file = new File(resource.getFile().getAbsolutePath() + "/" + nanoid + ".jpg");
+
+				//file = File.createTempFile(nanoid.toString(), ".jpg", file.getAbsoluteFile());
+				log.info("buffered img state: " + bufferedImg.toString());
+				log.info("file state: " + file.toString());
 				if(bufferedImg != null && file != null)
 				{
+					log.info("bufferimg and file is not null");
 					ImageIO.write(bufferedImg, "jpg", file);
 					dataread = true;
 				}
@@ -183,34 +203,38 @@ public class ID3VService{
 			if(dataread == false)
 			{
 				log.error("file image data was not read");
-				file = CreateEmptyJPGFile(uuid);
+				file = CreateEmptyJPGFile(nanoid);
 			}
 
 		}
 		catch(IOException e)
 		{
+			log.info("io exception caught in creating album cover");
 			log.error(e);
-			file = CreateEmptyJPGFile(uuid);
+			
+			file = CreateEmptyJPGFile(nanoid);
 		}
 		
 		catch(Exception e)
 		{
+			log.info("exception caught in creating album cover");
+
 			log.error(e);
-			file = CreateEmptyJPGFile(uuid);
+			file = CreateEmptyJPGFile(nanoid);
 		}
 		
-			return file;
+		
+			return nanoid;
 
 	}
-	public File CreateEmptyJPGFile(UUID uuid) throws IOException
+	public File CreateEmptyJPGFile(String nanoid) throws IOException
 	{
-		File file = null;
 		String emptyImgClassPath = "static/album_covers/treble_clef.jpg";
+		Resource resource = new ClassPathResource("static/album_covers" );
 		String rootClassPath = "static/album_covers";
 		BufferedImage bufferedImg = ImageIO.read(new 
 				ClassPathResource(emptyImgClassPath).getFile().getAbsoluteFile());
-		file = File.createTempFile(uuid.toString(), ".jpg", 
-				new ClassPathResource(rootClassPath).getFile().getAbsoluteFile());
+		File file = new File(resource.getFile().getAbsolutePath() + "/" + nanoid + ".jpg");
 		if(bufferedImg != null && file != null)
 		{
 			ImageIO.write(bufferedImg, "jpg", file);
@@ -224,11 +248,12 @@ public class ID3VService{
 		 ID3v2 id3;
 
 		 id3 = mp3File.getId3v2Tag();
-		 File file = createAlbumCoverFileSystemFromAudioFiles(id3.getAlbumImage(), UUID.randomUUID());
+		 
+		 String FolderPathChecksumUUID = createAlbumCoverFileSystemFromAudioFiles(id3.getAlbumImage());
 
 		  ArtistSP ar = new ArtistSP(id3.getArtist(), LocalDateTime.now(), null, id3.getGenreDescription(), -1L);
-		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(),file.getAbsoluteFile().toString() , ar);
-		  SongSP s = new SongSP(id3.getTitle(), file.getAbsolutePath(), Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
+		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(),FolderPathChecksumUUID , ar);
+		  SongSP s = new SongSP(id3.getTitle(),file.getAbsolutePath() , Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
 				  Math.round(Math.random() * 10000000),  new ArrayList(List.of(al)));
 		  s.setArtist(ar);
 //		  ar.setAlbums(null);
@@ -273,10 +298,11 @@ public class ID3VService{
 		
 		Mp3File mp3File = mp3;
 		ID3v1 id3;
+		String FolderPathChecksumUUID = createAlbumCoverFileSystemFromAudioFiles(null);
 //		if (mp3file.hasId3v1Tag()) {
 		  id3 =  mp3File.getId3v1Tag();
 		  ArtistSP ar = new ArtistSP(id3.getArtist(), LocalDateTime.now(), null, id3.getGenreDescription(), -1L);
-		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(), null, ar);
+		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(),FolderPathChecksumUUID , ar);
 		  SongSP s = new SongSP(id3.getTitle(), file.getAbsolutePath(), Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
 				Math.round(Math.random() * 10000000),  new ArrayList(List.of(al)));
 		  s.setArtist(ar);

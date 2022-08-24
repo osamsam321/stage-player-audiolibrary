@@ -104,7 +104,15 @@
 		    <artifactId>jmh-generator-annprocess</artifactId>
 		    <version>1.35</version>
 		    <scope>provided</scope>
-		</dependency> 
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
+		<!-- https://mvnrepository.com/artifact/org.webjars.npm/nanoid -->
+		<dependency>
+		  <groupId>com.aventrix.jnanoid</groupId>
+		  <artifactId>jnanoid</artifactId>
+		  <version>2.0.0</version>
+		</dependency>
+
 		
 
 	</dependencies>

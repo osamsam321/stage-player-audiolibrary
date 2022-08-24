@@ -1,5 +1,6 @@
 package com.player.sql;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -54,7 +55,7 @@ public class CommonDAO {
 									rs.getLong("albumsp_id"),
 									rs.getString("album_name"),
 									rs.getTimestamp("start_dt").toLocalDateTime(),
-									rs.getString("albumsp_img_path"),
+									rs.getString("albumsp_img_identifer"),
 									null //empty for song list							
 								),
 						
@@ -80,7 +81,7 @@ public class CommonDAO {
 	
 	public List<TopSongs> findTopSongs(int amount)
 	{
-		String sql = "select artist_name, song_name, albumsp_img_path from songsp song \r\n"
+		String sql = "select artist_name, song_name, albumsp_img_identifier from songsp song \r\n"
 				+ "left join songsp_albums sa on sa.songsp_songsp_id = song.songsp_id  \r\n"
 				+ "left join albumsp album on album.albumsp_id  = sa.albums_albumsp_id \r\n"
 				+ "left join artistsp a on song.artistsp_id = a.artistsp_id \r\n"
@@ -91,8 +92,10 @@ public class CommonDAO {
 			public TopSongs mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new TopSongs(	
 									rs.getString("artist_name"),
-									rs.getString("song_name"),
-									rs.getString("albumsp_img_path")
+									rs.getString("albumsp_img_identifier"),
+									rs.getString("song_name")
+									
+									
 								);				
 			
 			

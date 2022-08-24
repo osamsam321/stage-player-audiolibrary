@@ -36,7 +36,7 @@ public class AlbumSP   {
 	private String albumName;
 	@Column(name="start_dt")
 	private LocalDateTime year;
-	@Column(name="albumsp_img_path")
+	@Column(name="albumsp_img_identifier", length = 100)
 	private String imgPath;
 //	@JsonBackReference
 	@JsonIgnore 
