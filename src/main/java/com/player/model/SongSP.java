@@ -32,7 +32,7 @@ public class SongSP  {
 	@Column(name = "songsp_id")
 	private Long id;
 	private String songName;
-	@Column(name="song_identifier")
+	@Column(name="song_identifier", unique = true)
 	private String path;
 	@Column(name = "song_length")
 	private Float seconds;

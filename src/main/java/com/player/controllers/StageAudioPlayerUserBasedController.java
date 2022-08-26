@@ -72,12 +72,12 @@ public class StageAudioPlayerUserBasedController {
 			return Files.readAllBytes(file.toPath());
 		
 	}
-	
-	@GetMapping(value = "/getaudio/{id}")
-	public @ResponseBody byte[] getAudio(@PathVariable("id") String id) throws IOException {
-			String fileType = ".jpg";
-		    Resource resource = new ClassPathResource("static/audio");
-			File file = new File(resource.getFile().getAbsolutePath() + "/" + id + fileType);
+	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping(value = "/getAudioMP3/{songid}")
+	public @ResponseBody byte[] getAudio(@PathVariable("songid") String songid) throws IOException {
+			String fileType = ".mp3";
+		    Resource resource = new ClassPathResource("static/audio_play");
+			File file = new File(resource.getFile().getAbsolutePath() + "/" + songid + fileType);
 			
 		    log.info("image path being grabbed: " + file.getAbsolutePath() + fileType );
 

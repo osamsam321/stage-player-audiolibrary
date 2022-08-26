@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,11 +24,13 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.aspectj.apache.bcel.util.ClassPath;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.mpatric.mp3agic.ID3v1;
@@ -162,7 +167,6 @@ public class ID3VService{
 //	}
 	public synchronized String createAlbumCoverFileSystemFromAudioFiles(byte[] imageByteData) throws IOException 
 	{	
-		SecureRandom sr = new SecureRandom();
 		//generate identifier
 		String nanoid = NanoIdUtils.randomNanoId(); 
 		File file = null;
@@ -250,10 +254,10 @@ public class ID3VService{
 		 id3 = mp3File.getId3v2Tag();
 		 
 		 String FolderPathChecksumUUID = createAlbumCoverFileSystemFromAudioFiles(id3.getAlbumImage());
-
+		 String nanoidSongIdentifier = NanoIdUtils.randomNanoId();
 		  ArtistSP ar = new ArtistSP(id3.getArtist(), LocalDateTime.now(), null, id3.getGenreDescription(), -1L);
 		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(),FolderPathChecksumUUID , ar);
-		  SongSP s = new SongSP(id3.getTitle(),file.getAbsolutePath() , Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
+		  SongSP s = new SongSP(id3.getTitle(), nanoidSongIdentifier , Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
 				  Math.round(Math.random() * 10000000),  new ArrayList(List.of(al)));
 		  s.setArtist(ar);
 //		  ar.setAlbums(null);
@@ -264,6 +268,7 @@ public class ID3VService{
 		  if( aas.getArtist() != null && aas.getArtist().getArtistName() != null) 
 		  {
 			      log.info("aas was  saved");
+			      addSongToPlayResourceFolder(mp3.getFilename(), nanoidSongIdentifier);
 				  DbAASQueue.add(aas);		
 		  }
 		  else
@@ -275,35 +280,36 @@ public class ID3VService{
 		
 	}
 
+	private void addSongToPlayResourceFolder(String filename, String nanoidSongIdentifier) {
+		// TODO Auto-generated method stub
+		log.info("mp3 filename in addSongToPlayResourceFolder method" + filename);
+		File fileFromAudioFolder = new File(filename);
+		Resource resource = new ClassPathResource("static/audio_play" );
+		try {
+			log.info("resource folder:" + resource.getFile().getAbsolutePath());
+			File src = new File(fileFromAudioFolder.getAbsoluteFile().toString());
+			File dest = new File(resource.getFile().getAbsoluteFile().toString());
+			File tmpDest =  new File(resource.getFile().getAbsoluteFile() + "/" + nanoidSongIdentifier +  ".mp3");
+			log.info("mp3 temp file is:" + tmpDest.getAbsolutePath());
+			FileCopyUtils.copy(src, tmpDest);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
 	public AASContainer id3v1ContentToAAS() throws UnsupportedTagException, InvalidDataException, IOException {
-//		artistName = "";
-//		startYear = 0;
-//		imgPath = "";
-//		genre = "";
-//		totalViews = 0;
-		
-//		this.albumName = null;
-//		this.year = -1;
-//		this.imgPath = null;
-//		this.artist = null;
-//		this.songs = null;
-		
-//		this.songName = songName;
-//		this.date = date;
-//		this.path = path;
-//		this.seconds = seconds;
-//		this.genre = genre;
-//		this.views = views;
-//		this.album = album;
+
 		
 		Mp3File mp3File = mp3;
 		ID3v1 id3;
 		String FolderPathChecksumUUID = createAlbumCoverFileSystemFromAudioFiles(null);
-//		if (mp3file.hasId3v1Tag()) {
+		String nanoidSongIdentifier = NanoIdUtils.randomNanoId();
 		  id3 =  mp3File.getId3v1Tag();
 		  ArtistSP ar = new ArtistSP(id3.getArtist(), LocalDateTime.now(), null, id3.getGenreDescription(), -1L);
 		  AlbumSP al = new AlbumSP(id3.getAlbum(), LocalDateTime.now(),FolderPathChecksumUUID , ar);
-		  SongSP s = new SongSP(id3.getTitle(), file.getAbsolutePath(), Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
+		  SongSP s = new SongSP(id3.getTitle(), nanoidSongIdentifier, Long.valueOf(mp3.getLengthInSeconds()).floatValue(), 
 				Math.round(Math.random() * 10000000),  new ArrayList(List.of(al)));
 		  s.setArtist(ar);
 		 // ar.setAlbums(null);
@@ -313,6 +319,7 @@ public class ID3VService{
 		  if( aas.getArtist() != null &&  aas.getArtist().getArtistName() != null) 
 		  {
 				  log.info("aas was  saved");
+				  addSongToPlayResourceFolder(mp3.getFilename(),  nanoidSongIdentifier );
 				  DbAASQueue.add(aas);
 
 		  }

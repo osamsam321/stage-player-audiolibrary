@@ -81,7 +81,7 @@ public class CommonDAO {
 	
 	public List<TopSongs> findTopSongs(int amount)
 	{
-		String sql = "select artist_name, song_name, albumsp_img_identifier from songsp song \r\n"
+		String sql = "select artist_name, song_name, albumsp_img_identifier, song_identifier from songsp song \r\n"
 				+ "left join songsp_albums sa on sa.songsp_songsp_id = song.songsp_id  \r\n"
 				+ "left join albumsp album on album.albumsp_id  = sa.albums_albumsp_id \r\n"
 				+ "left join artistsp a on song.artistsp_id = a.artistsp_id \r\n"
@@ -93,8 +93,8 @@ public class CommonDAO {
 				return new TopSongs(	
 									rs.getString("artist_name"),
 									rs.getString("albumsp_img_identifier"),
-									rs.getString("song_name")
-									
+									rs.getString("song_name"),
+									rs.getString("song_identifier")
 									
 								);				
 			
