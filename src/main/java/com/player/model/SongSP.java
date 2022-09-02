@@ -2,6 +2,7 @@ package com.player.model;
 
 import java.sql.Array;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -36,6 +37,8 @@ public class SongSP  {
 	private String path;
 	@Column(name = "song_length")
 	private Float seconds;
+	@Column(name = "song_length_ms")
+	private Long songLengthMs;
 	@Column(name="listen_count")
 	private Long views;
 //	@JsonBackReference
@@ -71,6 +74,34 @@ public class SongSP  {
 		this.views = views;
 		this.albums = albums;
 	}
+	
+	public SongSP(Long id, String songName, String path, Float seconds, Long songLengthMs, Long views,
+			List<AlbumSP> albums, ArtistSP artist) {
+		super();
+		this.id = id;
+		this.songName = songName;
+		this.path = path;
+		this.seconds = seconds;
+		this.songLengthMs = songLengthMs;
+		this.views = views;
+		this.albums = albums;
+		this.artist = artist;
+	}
+	
+	public SongSP(String title, String nanoidSongIdentifier, Object object, Long songLengthMs, long round,
+			ArrayList arrayList) {
+		// TODO Auto-generated constructor stub
+	
+		super();
+		this.songName = songName;
+		this.path = path;
+		this.seconds = seconds;
+		this.songLengthMs = songLengthMs;
+		this.views = views;
+		this.albums = albums;
+		
+	}
+
 	public SongSP newFilledSong(SongSP s)
 	{
 		String sn = (songName == null || songName != s.songName )?s.songName:songName;
@@ -132,9 +163,15 @@ public class SongSP  {
 	public void setSeconds(Float seconds) {
 		this.seconds = seconds;
 	}
-
-
 	
+	public Long getSongLengthMs() {
+		return songLengthMs;
+	}
+
+	public void setSongLengthMs(Long songLengthMs) {
+		this.songLengthMs = songLengthMs;
+	}
+
 	@Override
 	public String toString() {
 		return "Song [id=" + id + ", songName=" + ", path=" + path + ", seconds="

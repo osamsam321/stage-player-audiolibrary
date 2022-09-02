@@ -233,7 +233,7 @@ public class ID3VService{
 	}
 	public File CreateEmptyJPGFile(String nanoid) throws IOException
 	{
-		String emptyImgClassPath = "static/album_covers/treble_clef.jpg";
+		String emptyImgClassPath = "static/album_cover_default/treble_clef.jpg";
 		Resource resource = new ClassPathResource("static/album_covers" );
 		String rootClassPath = "static/album_covers";
 		BufferedImage bufferedImg = ImageIO.read(new 
@@ -321,6 +321,7 @@ public class ID3VService{
 				  log.info("aas was  saved");
 				  addSongToPlayResourceFolder(mp3.getFilename(),  nanoidSongIdentifier );
 				  DbAASQueue.add(aas);
+				  
 
 		  }
 		  else

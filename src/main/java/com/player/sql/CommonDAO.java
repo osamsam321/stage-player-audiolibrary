@@ -43,12 +43,27 @@ public class CommonDAO {
 			public AASSingleFieldContainer mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new AASSingleFieldContainer(
 						new SongSP(	
+								
+//								public SongSP(Long id, String songName, String path, Float seconds, Long songLengthMs, Long views,
+//										List<AlbumSP> albums, ArtistSP artist) {
+//									super();
+//									this.id = id;
+//									this.songName = songName;
+//									this.path = path;
+//									this.seconds = seconds;
+//									this.songLengthMs = songLengthMs;
+//									this.views = views;
+//									this.albums = albums;
+//									this.artist = artist;
+//								}
 									rs.getLong("songsp_id"),
 									rs.getString("song_path"),
 									rs.getString("song_name"),
 									rs.getFloat("song_length"),
+									rs.getLong("song_length_ms"),
 									rs.getLong("listen_count"),
-									null //keep empty id value for album list
+									null, //keep empty id value for album list
+									null
 								),
 						
 						new AlbumSP(

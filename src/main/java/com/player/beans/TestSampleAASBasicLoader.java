@@ -46,7 +46,7 @@ public class TestSampleAASBasicLoader implements IAASTest {
 		AlbumSP album1 = new AlbumSP("Invasion Of Your Privacy", LocalDateTime.now(), "C:/Users/osams/OneDrive/Pictures/projects/stage-player/Ratt_1.jpg"
 				, artist1);
 		SongSP song1 = new SongSP("Lay it down", "C:/Users/osams/Music/m1/Ratt - Lay It Down .mp3",
-				255f, 1L, List.of(album1));
+				255f,  1L, List.of(album1));
 		AASContainer aas = new AASContainer();
 		aas.setArtist(artist1);
 		aas.setAlbums(List.of(album1));

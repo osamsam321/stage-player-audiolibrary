@@ -28,10 +28,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.player.model.AASSingleFieldContainer;
+import com.player.model.RecentlyPlayedSongsSp;
 import com.player.model.TopSongs;
 import com.player.model.elw.SongsPlayed;
 import com.player.service.ArtistService;
 import com.player.service.CommonServiceSp;
+import com.player.service.RecentlyPlayedSongsSpService;
 import com.player.service.SongsPlayedService;
 import java.nio.file.Files;
 
@@ -43,6 +45,9 @@ public class StageAudioPlayerUserBasedController {
 	SongsPlayedService spService;
 	@Autowired
 	CommonServiceSp commanServiceSp;
+	@Autowired
+	RecentlyPlayedSongsSpService rpsService; 
+	
 	@GetMapping("/getsongsplayed/{userid}")
 	public Optional<List<SongsPlayed>> getAllSongsPlayed(@PathVariable("userid")Long userid)
 	{
@@ -82,6 +87,21 @@ public class StageAudioPlayerUserBasedController {
 		    log.info("image path being grabbed: " + file.getAbsolutePath() + fileType );
 
 			return Files.readAllBytes(file.toPath());
+		
+	}
+	@CrossOrigin(origins = "http://localhost:4200")
+	@GetMapping(value = "/getRecentlyPlayedSongs/{userId}")
+	public ResponseEntity<RecentlyPlayedSongsSp> getRecentlyPlayedSongs(@PathVariable("userId") Long userId) throws IOException {
+		return ResponseEntity.of(rpsService.FetchMostRecentlyPlayedWithUserId(userId));
+
+		
+	}
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping(value = "/addRecentlyPlayedSong")
+	public ResponseEntity<RecentlyPlayedSongsSp> addRecentlyPlayedSong(@RequestBody RecentlyPlayedSongsSp recentlyPlayed) throws IOException {
+		log.info("called addRecentlyPlayedSong method, object details: " +  recentlyPlayed.toString());
+		return ResponseEntity.of(rpsService.save(recentlyPlayed));
+
 		
 	}
 
