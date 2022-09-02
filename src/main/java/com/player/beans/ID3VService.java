@@ -285,6 +285,19 @@ public class ID3VService{
 		log.info("mp3 filename in addSongToPlayResourceFolder method" + filename);
 		File fileFromAudioFolder = new File(filename);
 		Resource resource = new ClassPathResource("static/audio_play" );
+		if(!resource.exists())
+		{
+			Resource resourceTmp = new ClassPathResource("static" );
+			try {
+				File fileTmp = new File(resourceTmp.getFile().getAbsolutePath());
+				new File(resourceTmp.getFile().getAbsolutePath()+ "/audio_play").mkdir();
+			 resource = new ClassPathResource("static/audio_play" );
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		try {
 			log.info("resource folder:" + resource.getFile().getAbsolutePath());
 			File src = new File(fileFromAudioFolder.getAbsoluteFile().toString());
