@@ -54,9 +54,15 @@
 		    <scope>run</scope>
 		</dependency>-->
 		
-		 <dependency>
+		 <!-- <dependency>
 		     <groupId>mysql</groupId>
 		     <artifactId>mysql-connector-java</artifactId>
+		</dependency> -->
+		
+		<dependency>
+		  <groupId>org.postgresql</groupId>
+		  <artifactId>postgresql</artifactId>
+		  <!--<version> (managed by Spring Boot)42.2.5 </version> -->
 		</dependency>
 		 
 		<dependency>

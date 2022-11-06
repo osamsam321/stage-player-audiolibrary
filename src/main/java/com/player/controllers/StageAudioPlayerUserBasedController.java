@@ -39,6 +39,7 @@ import java.nio.file.Files;
 @RequestMapping("user/")
 public class StageAudioPlayerUserBasedController {
 	Logger log = LogManager.getLogger(StageAudioPlayerUserBasedController.class);
+	String orginsUrl = "http://localhost:4200";
 	@Autowired
 	SongsPlayedService spService;
 	@Autowired

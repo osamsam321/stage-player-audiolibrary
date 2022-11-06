@@ -65,7 +65,8 @@ enum ServiceConfigType
 {
 	TEST_DATA(List.of(LoaderService.LOAD_DB_TEST_DATA)),
 	TEST_FILE_AND_DATA(List.of(LoaderService.LOAD_DB_TEST_DATA, LoaderService.LOAD_AUDIO_FROM_FILES)),
-	PRODUCTION(List.of(LoaderService.LOAD_AUDIO_FROM_FILES));
+	PRODUCTION(List.of(LoaderService.LOAD_AUDIO_FROM_FILES)),
+	NONE(null);
 	
 	private List<LoaderService > serviceType;
 	 ServiceConfigType(List<LoaderService> serviceType)
@@ -81,7 +82,8 @@ enum ServiceConfigType
 @Component
 public class DBAASControlService implements CommandLineRunner/*,UserIOAPI */ {
 	Logger log = LogManager.getLogger(GeniusApiJSONRWService.class);
-	ServiceConfigType config = ServiceConfigType.TEST_FILE_AND_DATA;
+	//not running currently
+	ServiceConfigType config = ServiceConfigType.NONE;
 	@Override
 	public void run(String... args) throws Exception {
 		Thread t = new Thread() {
