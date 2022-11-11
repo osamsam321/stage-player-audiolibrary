@@ -126,16 +126,17 @@ public class StageAudioPlayerController {
 //		test.test();
 //		return null;
 	}
-	@GetMapping("/content/a/{id}")
-	public ResponseEntity<List<Map<String, Object>>> album(@PathVariable("id") Long id)
+	@GetMapping("/content/release/{id}")
+	public ResponseEntity<List<Map<String, Object>>> getReleaseSpContent(@PathVariable("id") Long id)
 	{	
 //		return ResponseEntity.ok(new MBBaseJC.
 //				MBBaseQueryAndJSONBuilder().getAllArtistWithId(id).getJsonDBCM().getJSONDBResult());
-		return  ResponseEntity.ok(mbBaseJC.buildDBCM(mbBuilder.newJSONDBCM().getTrackWithId(id)
+		return  ResponseEntity.ok(mbBaseJC.buildDBCM(mbBuilder.newJSONDBCM().getReleaseWithId(id)
 									.build()).getJsonDBCM().getJSONDBResult());
 //		test.test();
 //		return null;
 	}
+	 
 
 	@GetMapping("/playback/thirdparty/mp3/track/{id}")
 	public ResponseEntity<List<Map<String, Object>>> playMp3Track(@PathVariable("id") Long id)

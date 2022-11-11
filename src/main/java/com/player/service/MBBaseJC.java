@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.player.jsondbcm.dao.ArtistSPJSONDBCMRepo;
+import com.player.jsondbcm.dao.RelaseSPJSONDBCMRepo;
 import com.player.jsondbcm.dao.TrackSPJSONDBCMRepo;
 import com.player.model.JSONDBCM;
 
@@ -51,6 +52,8 @@ public class MBBaseJC {
 		private ArtistSPJSONDBCMRepo artistRepo;
 		 @Autowired
 		private TrackSPJSONDBCMRepo trackRepo;
+		 @Autowired
+		 private RelaseSPJSONDBCMRepo releaseRepo;
 		 
 		public MBBaseQueryAndJSONBuilder()
 		{
@@ -78,6 +81,16 @@ public class MBBaseJC {
 		public MBBaseQueryAndJSONBuilder getTrackWithId(Long id)
 		{
 			jsonDBCM.add(trackRepo.getTrack(id));
+			 return this;
+		}
+		public MBBaseQueryAndJSONBuilder getReleasesWithId(List<Long> ids)
+		{
+			 jsonDBCM.add(releaseRepo.getReleases(ids));
+			 return this;
+		}
+		public MBBaseQueryAndJSONBuilder getReleaseWithId(Long id)
+		{
+			jsonDBCM.add(releaseRepo.getRelease(id));
 			 return this;
 		}
 		public MBBaseQueryAndJSONBuilder newJSONDBCM()
